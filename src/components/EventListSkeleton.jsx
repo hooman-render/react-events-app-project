@@ -1,37 +1,43 @@
-import { Box, Skeleton, SkeletonText, Stack } from "@chakra-ui/react";
-import {
-  appRaisedSurfaceStyles,
-  appRadii,
-  appSurfaceStyles,
-} from "../theme/appTheme";
+import { Box, Flex, Skeleton, Stack } from '@chakra-ui/react';
+import { eventMetaPanel, radius, skeletonAccent, skeletonBase, surface } from '../theme/theme';
 
 // Uses the same shape as the event cards while loading.
 export const EventListSkeleton = () => (
-  <Box
-    {...appSurfaceStyles}
-    borderRadius={appRadii.panel}
-    overflow="hidden"
-  >
-    <Skeleton height="220px" startColor="rgba(18, 45, 45, 0.98)" endColor="rgba(44, 88, 88, 0.98)" />
-    <Stack gap="4" p="5">
-      <Stack gap="3">
-        <Skeleton height="12px" startColor="rgba(18, 45, 45, 0.98)" endColor="rgba(44, 88, 88, 0.98)" width="22%" />
-        <Skeleton height="24px" startColor="rgba(18, 45, 45, 0.98)" endColor="rgba(44, 88, 88, 0.98)" width="62%" />
-        <Skeleton height="22px" startColor="rgba(170, 152, 214, 0.28)" endColor="rgba(203, 184, 255, 0.40)" width="44%" />
-        <SkeletonText
-          noOfLines={3}
-          startColor="rgba(18, 45, 45, 0.98)"
-          endColor="rgba(44, 88, 88, 0.98)"
-        />
-      </Stack>
-      <Box {...appRaisedSurfaceStyles} borderRadius={appRadii.inner} p="3.5">
-        <Stack gap="3">
-          <Skeleton height="16px" startColor="rgba(18, 45, 45, 0.98)" endColor="rgba(44, 88, 88, 0.98)" width="74%" />
-          <Skeleton height="16px" startColor="rgba(18, 45, 45, 0.98)" endColor="rgba(44, 88, 88, 0.98)" width="68%" />
-          <Skeleton height="16px" startColor="rgba(18, 45, 45, 0.98)" endColor="rgba(44, 88, 88, 0.98)" width="52%" />
+    <Box {...surface} borderRadius={radius.panel} display="flex" flexDirection="column" height="100%" overflow="hidden">
+        <Skeleton {...skeletonBase} aspectRatio={16 / 9} width="100%" />
+
+        <Stack flex="1" gap="4" p={{ base: '4', md: '5' }}>
+            <Stack gap="3">
+                <Stack gap="2">
+                    <Skeleton {...skeletonBase} height="12px" width="5rem" />
+                    <Skeleton
+                        {...skeletonBase}
+                        height={{ base: '22px', md: '24px' }}
+                        width={{ base: '68%', md: '62%' }}
+                    />
+                </Stack>
+
+                <Flex gap="2" wrap="wrap">
+                    <Skeleton {...skeletonAccent} borderRadius={radius.pill} height="22px" width="4.75rem" />
+                    <Skeleton {...skeletonAccent} borderRadius={radius.pill} height="22px" width="5.5rem" />
+                </Flex>
+
+                <Stack gap="3">
+                    <Skeleton {...skeletonBase} height="12px" width="100%" />
+                    <Skeleton {...skeletonBase} height="12px" width="92%" />
+                    <Skeleton {...skeletonBase} height="12px" width="74%" />
+                </Stack>
+            </Stack>
+
+            <Box {...eventMetaPanel} p="3.5">
+                <Stack gap="3">
+                    <Skeleton {...skeletonBase} height="16px" width="78%" />
+                    <Skeleton {...skeletonBase} height="16px" width="72%" />
+                    <Skeleton {...skeletonBase} height="16px" width="58%" />
+                </Stack>
+            </Box>
+
+            <Skeleton {...skeletonAccent} borderRadius="md" height="36px" mt="auto" width="132px" />
         </Stack>
-      </Box>
-      <Skeleton height="36px" startColor="rgba(170, 152, 214, 0.30)" endColor="rgba(203, 184, 255, 0.42)" width="132px" />
-    </Stack>
-  </Box>
+    </Box>
 );

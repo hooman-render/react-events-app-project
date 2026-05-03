@@ -1,23 +1,24 @@
-'use client'
+'use client';
 
-import { ChakraProvider, defaultSystem } from '@chakra-ui/react'
-import { ColorModeProvider } from './color-mode'
+import { ChakraProvider, defaultSystem } from '@chakra-ui/react';
+import { ColorModeProvider } from './color-mode';
+import { colorPalette } from '../../theme/theme';
 
 export function Provider(props) {
-  return (
-    <ChakraProvider
-      value={defaultSystem}
-      globalCss={{
-        "html, body": {
-          background: "#031414",
-          color: "#f5f7fb",
-        },
-        "::selection": {
-          background: "rgba(203, 184, 255, 0.28)",
-        },
-      }}
-    >
-      <ColorModeProvider {...props} />
-    </ChakraProvider>
-  )
+    return (
+        <ChakraProvider
+            value={defaultSystem}
+            globalCss={{
+                'html, body': {
+                    background: colorPalette.background,
+                    color: colorPalette.text,
+                },
+                '::selection': {
+                    background: colorPalette.primaryBorder,
+                },
+            }}
+        >
+            <ColorModeProvider {...props} />
+        </ChakraProvider>
+    );
 }

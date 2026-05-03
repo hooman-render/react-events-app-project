@@ -4,6 +4,7 @@ import {
     Box,
     Button,
     Checkbox,
+    CloseButton,
     DatePicker,
     Dialog,
     Field,
@@ -18,17 +19,22 @@ import {
     useBreakpointValue,
 } from '@chakra-ui/react';
 import { toaster } from './ui/toaster';
+import { Tooltip } from './ui/tooltip';
 import { buildEventPayload, createEventFormValues } from '../utils/event-utils';
 import {
-    appColors,
-    appDialogSurfaceStyles,
-    appInputStyles,
-    appNeutralButtonStyles,
-    appPrimaryButtonStyles,
-    appRadii,
-    appSectionSurfaceStyles,
-    appTransitions,
-} from '../theme/appTheme';
+    colorPalette,
+    datePickerCss,
+    datePickerPanel,
+    dialogBackdrop,
+    dialogCloseButton,
+    inputStyles,
+    secondaryButton,
+    primaryButton,
+    dialogPanel,
+    radius,
+    sectionPanel,
+    transitions,
+} from '../theme/theme';
 
 export const EventFormDialog = ({ categories, initialEvent, isSubmitting, mode, onOpenChange, onSubmit, open }) => {
     const [formValues, setFormValues] = useState(createEventFormValues(initialEvent));
@@ -218,22 +224,23 @@ export const EventFormDialog = ({ categories, initialEvent, isSubmitting, mode, 
 
     return (
         <Dialog.Root
-            closeOnInteractOutside={!isSubmitting}
+            closeOnEscape={false}
+            closeOnInteractOutside={false}
             open={open}
             onOpenChange={(details) => onOpenChange(details.open)}
         >
             <Portal>
-                <Dialog.Backdrop bg="rgba(1, 8, 8, 0.82)" />
+                <Dialog.Backdrop {...dialogBackdrop} />
                 <Dialog.Positioner maxH="100vh" overflow="hidden" padding={{ base: '2', sm: '4' }}>
                     <Dialog.Content
-                        {...appDialogSurfaceStyles}
+                        {...dialogPanel}
                         display="flex"
                         flexDirection="column"
                         maxH={{ base: '92vh', md: '90vh' }}
-                        maxW={{ base: 'calc(100vw - 1rem)', md: '3xl' }}
+                        maxW={{ base: 'calc(100vw - 1rem)', md: '4xl' }}
                         minH="0"
                         overflow="hidden"
-                        borderRadius={appRadii.panel}
+                        borderRadius={radius.panel}
                         w="full"
                     >
                         <form
@@ -248,14 +255,15 @@ export const EventFormDialog = ({ categories, initialEvent, isSubmitting, mode, 
                         >
                             <Dialog.Header
                                 borderBottomWidth="1px"
-                                borderColor={appColors.border}
+                                borderColor={colorPalette.border}
                                 pb={{ base: '3', md: '4' }}
+                                position="relative"
                                 pt={{ base: '4', md: '6' }}
                                 px={{ base: '3', md: '6' }}
                             >
-                                <Stack align="start" gap={{ base: '0.5', md: '1.5' }}>
+                                <Stack align="start" gap={{ base: '0.5', md: '1.5' }} pr={{ base: '16', md: '20' }}>
                                     <Dialog.Title
-                                        color={appColors.text}
+                                        color={colorPalette.text}
                                         fontSize={{ base: 'lg', md: 'xl' }}
                                         fontWeight="bold"
                                         lineHeight="short"
@@ -265,10 +273,29 @@ export const EventFormDialog = ({ categories, initialEvent, isSubmitting, mode, 
                                     >
                                         {dialogTitle}
                                     </Dialog.Title>
-                                    <Dialog.Description color={appColors.textMuted} fontSize={{ base: 'xs', md: 'sm' }}>
+                                    <Dialog.Description
+                                        color={colorPalette.textMuted}
+                                        fontSize={{ base: 'xs', md: 'sm' }}
+                                    >
                                         Provide the required event details and save them to the server.
                                     </Dialog.Description>
                                 </Stack>
+
+                                <Tooltip content="Close">
+                                    <Dialog.CloseTrigger asChild>
+                                        <CloseButton
+                                            {...dialogCloseButton}
+                                            aria-label={
+                                                mode === 'create' ? 'Cancel event creation' : 'Cancel event editing'
+                                            }
+                                            disabled={isSubmitting}
+                                            onClick={handleCancel}
+                                            position="absolute"
+                                            right={{ base: '3', md: '5' }}
+                                            top={{ base: '3', md: '5' }}
+                                        />
+                                    </Dialog.CloseTrigger>
+                                </Tooltip>
                             </Dialog.Header>
                             <Dialog.Body
                                 flex="1"
@@ -281,33 +308,33 @@ export const EventFormDialog = ({ categories, initialEvent, isSubmitting, mode, 
                             >
                                 <Stack gap={{ base: '3', md: '4' }}>
                                     <Box
-                                        {...appSectionSurfaceStyles}
-                                        borderColor={hasBasicDetailsError ? 'red.400' : appColors.border}
+                                        {...sectionPanel}
+                                        borderColor={hasBasicDetailsError ? 'red.400' : colorPalette.border}
                                         boxSizing="border-box"
                                         rounded="lg"
                                         p={{ base: '3', md: '4' }}
                                         w="full"
-                                        transition={appTransitions.smooth}
+                                        transition={transitions.smooth}
                                         _hover={{
-                                            borderColor: hasBasicDetailsError ? 'red.400' : appColors.borderStrong,
+                                            borderColor: hasBasicDetailsError ? 'red.400' : colorPalette.borderStrong,
                                         }}
                                         _focusWithin={{
-                                            borderColor: hasBasicDetailsError ? 'red.400' : appColors.borderStrong,
+                                            borderColor: hasBasicDetailsError ? 'red.400' : colorPalette.borderStrong,
                                             boxShadow: hasBasicDetailsError
-                                                ? '0 0 0 1px rgba(248, 113, 113, 0.36)'
-                                                : `0 0 0 1px ${appColors.borderStrong}`,
+                                                ? `0 0 0 1px ${colorPalette.dangerFocus}`
+                                                : `0 0 0 1px ${colorPalette.borderStrong}`,
                                         }}
                                     >
                                         <Stack gap={{ base: '3', md: '4' }}>
-                                            <Text color={appColors.text} fontSize="sm" fontWeight="semibold">
+                                            <Text color={colorPalette.text} fontSize="sm" fontWeight="semibold">
                                                 Basic details
                                             </Text>
                                             <Field.Root invalid={Boolean(basicFieldErrors.title)} required>
-                                                <Field.Label color={appColors.text} fontSize="sm">
+                                                <Field.Label color={colorPalette.text} fontSize="sm">
                                                     Title
                                                 </Field.Label>
                                                 <Input
-                                                    {...appInputStyles}
+                                                    {...inputStyles}
                                                     name="title"
                                                     onBlur={handleBasicFieldBlur}
                                                     onChange={handleChange}
@@ -322,11 +349,11 @@ export const EventFormDialog = ({ categories, initialEvent, isSubmitting, mode, 
                                             </Field.Root>
 
                                             <Field.Root invalid={Boolean(basicFieldErrors.description)} required>
-                                                <Field.Label color={appColors.text} fontSize="sm">
+                                                <Field.Label color={colorPalette.text} fontSize="sm">
                                                     Description
                                                 </Field.Label>
                                                 <Textarea
-                                                    {...appInputStyles}
+                                                    {...inputStyles}
                                                     fontSize="sm"
                                                     minHeight={{ base: '84px', md: '96px' }}
                                                     name="description"
@@ -342,11 +369,11 @@ export const EventFormDialog = ({ categories, initialEvent, isSubmitting, mode, 
                                             </Field.Root>
 
                                             <Field.Root invalid={Boolean(basicFieldErrors.image)} required>
-                                                <Field.Label color={appColors.text} fontSize="sm">
+                                                <Field.Label color={colorPalette.text} fontSize="sm">
                                                     Image URL
                                                 </Field.Label>
                                                 <Input
-                                                    {...appInputStyles}
+                                                    {...inputStyles}
                                                     name="image"
                                                     onBlur={handleBasicFieldBlur}
                                                     onChange={handleChange}
@@ -358,7 +385,7 @@ export const EventFormDialog = ({ categories, initialEvent, isSubmitting, mode, 
                                                     value={formValues.image}
                                                 />
                                                 <Field.HelperText
-                                                    color={appColors.textMuted}
+                                                    color={colorPalette.textMuted}
                                                     fontSize={{ base: 'xs', md: 'sm' }}
                                                 >
                                                     Paste a direct image URL.
@@ -371,35 +398,37 @@ export const EventFormDialog = ({ categories, initialEvent, isSubmitting, mode, 
                                     </Box>
 
                                     <Box
-                                        {...appSectionSurfaceStyles}
-                                        borderColor={locationError ? 'red.400' : appColors.border}
+                                        {...sectionPanel}
+                                        borderColor={locationError ? 'red.400' : colorPalette.border}
                                         boxSizing="border-box"
                                         rounded="lg"
                                         p={{ base: '3', md: '4' }}
                                         w="full"
-                                        transition={appTransitions.smooth}
-                                        _hover={{ borderColor: locationError ? 'red.400' : appColors.borderStrong }}
+                                        transition={transitions.smooth}
+                                        _hover={{ borderColor: locationError ? 'red.400' : colorPalette.borderStrong }}
                                         _focusWithin={{
-                                            borderColor: locationError ? 'red.400' : appColors.borderStrong,
+                                            borderColor: locationError ? 'red.400' : colorPalette.borderStrong,
                                             boxShadow: locationError
-                                                ? '0 0 0 1px rgba(248, 113, 113, 0.36)'
-                                                : `0 0 0 1px ${appColors.borderStrong}`,
+                                                ? `0 0 0 1px ${colorPalette.dangerFocus}`
+                                                : `0 0 0 1px ${colorPalette.borderStrong}`,
                                         }}
                                     >
                                         <Stack gap={{ base: '3', md: '4' }}>
-                                            <Text color={appColors.text} fontSize="sm" fontWeight="semibold">
+                                            <Text color={colorPalette.text} fontSize="sm" fontWeight="semibold">
                                                 Location
                                             </Text>
-                                            <Field.Root invalid={Boolean(locationError)}>
+                                            <Field.Root invalid={Boolean(locationError)} w="full">
                                                 <Stack
                                                     align="stretch"
                                                     direction={{ base: 'column', md: 'row' }}
                                                     gap={{ base: '2', md: '3' }}
+                                                    maxW={{ base: 'none', md: '56rem', lg: '64rem' }}
+                                                    w="full"
                                                 >
                                                     <Input
-                                                        {...appInputStyles}
+                                                        {...inputStyles}
                                                         aria-label="Location"
-                                                        flex={{ base: 'none', md: '1' }}
+                                                        flex={{ base: 'none', md: '1 1 auto' }}
                                                         minW="0"
                                                         name="location"
                                                         onChange={handleChange}
@@ -409,21 +438,22 @@ export const EventFormDialog = ({ categories, initialEvent, isSubmitting, mode, 
                                                         w="full"
                                                     />
                                                     <Button
-                                                        {...appPrimaryButtonStyles}
+                                                        {...primaryButton}
                                                         disabled={isSearchingLocation}
-                                                        minW={{ md: '10rem' }}
+                                                        flexShrink={0}
                                                         onClick={() => void handleFindLocation()}
                                                         size="sm"
                                                         whiteSpace="nowrap"
                                                         type="button"
-                                                        w={{ base: 'full', md: 'auto' }}
+                                                        w={{ base: 'full', md: '12rem' }}
                                                     >
                                                         {isSearchingLocation ? 'Searching...' : 'Find location'}
                                                     </Button>
                                                 </Stack>
                                                 <Field.HelperText
-                                                    color={appColors.textMuted}
+                                                    color={colorPalette.textMuted}
                                                     fontSize={{ base: 'xs', md: 'sm' }}
+                                                    maxW={{ md: '52rem' }}
                                                 >
                                                     Optional. Enter a city name and click Find location, or type a
                                                     location manually.
@@ -436,15 +466,15 @@ export const EventFormDialog = ({ categories, initialEvent, isSubmitting, mode, 
                                     </Box>
 
                                     <Box
-                                        {...appSectionSurfaceStyles}
-                                        borderColor={hasDateTimeSectionError ? 'red.400' : appColors.border}
+                                        {...sectionPanel}
+                                        borderColor={hasDateTimeSectionError ? 'red.400' : colorPalette.border}
                                         boxSizing="border-box"
                                         rounded="lg"
                                         p={{ base: '3', md: '4' }}
                                         w="full"
                                     >
                                         <Stack gap={{ base: '3', md: '4' }}>
-                                            <Text color={appColors.text} fontSize="sm" fontWeight="semibold">
+                                            <Text color={colorPalette.text} fontSize="sm" fontWeight="semibold">
                                                 Date and time
                                             </Text>
                                             <SimpleGrid columns={{ base: 1, md: 2 }} gap={{ base: '3', md: '4' }}>
@@ -474,31 +504,36 @@ export const EventFormDialog = ({ categories, initialEvent, isSubmitting, mode, 
                                     </Box>
 
                                     <Box
-                                        {...appSectionSurfaceStyles}
-                                        borderColor={isCategoryInvalid ? 'red.400' : appColors.border}
+                                        {...sectionPanel}
+                                        borderColor={isCategoryInvalid ? 'red.400' : colorPalette.border}
                                         boxSizing="border-box"
                                         rounded="lg"
                                         p={{ base: '3', md: '4' }}
                                         w="full"
-                                        transition={appTransitions.smooth}
-                                        _hover={{ borderColor: isCategoryInvalid ? 'red.400' : appColors.borderStrong }}
+                                        transition={transitions.smooth}
+                                        _hover={{
+                                            borderColor: isCategoryInvalid ? 'red.400' : colorPalette.borderStrong,
+                                        }}
                                         _focusWithin={{
-                                            borderColor: isCategoryInvalid ? 'red.400' : appColors.borderStrong,
+                                            borderColor: isCategoryInvalid ? 'red.400' : colorPalette.borderStrong,
                                             boxShadow: isCategoryInvalid
-                                                ? '0 0 0 1px rgba(248, 113, 113, 0.36)'
-                                                : `0 0 0 1px ${appColors.borderStrong}`,
+                                                ? `0 0 0 1px ${colorPalette.dangerFocus}`
+                                                : `0 0 0 1px ${colorPalette.borderStrong}`,
                                         }}
                                     >
                                         <Fieldset.Root invalid={isCategoryInvalid} required>
                                             <Stack gap={{ base: '3', md: '4' }}>
                                                 <Fieldset.Legend
-                                                    color={appColors.text}
+                                                    color={colorPalette.text}
                                                     fontSize="sm"
                                                     fontWeight="semibold"
                                                 >
                                                     Categories
                                                 </Fieldset.Legend>
-                                                <Text color={appColors.textMuted} fontSize={{ base: 'xs', md: 'sm' }}>
+                                                <Text
+                                                    color={colorPalette.textMuted}
+                                                    fontSize={{ base: 'xs', md: 'sm' }}
+                                                >
                                                     Select one or more categories.
                                                 </Text>
                                                 <Checkbox.Group
@@ -527,30 +562,30 @@ export const EventFormDialog = ({ categories, initialEvent, isSubmitting, mode, 
                                                                 flexShrink={0}
                                                                 gap={{ base: '1.5', md: '2' }}
                                                                 key={category.id}
-                                                                transition={appTransitions.smooth}
+                                                                transition={transitions.smooth}
                                                                 value={String(category.id)}
                                                                 _hover={{
-                                                                    bg: 'rgba(203, 184, 255, 0.08)',
-                                                                    borderColor: appColors.borderStrong,
+                                                                    bg: colorPalette.primarySoft,
+                                                                    borderColor: colorPalette.borderStrong,
                                                                 }}
                                                                 _focusWithin={{
-                                                                    borderColor: appColors.borderStrong,
-                                                                    boxShadow: `0 0 0 3px ${appColors.focusRing}`,
+                                                                    borderColor: colorPalette.borderStrong,
+                                                                    boxShadow: `0 0 0 3px ${colorPalette.focusRing}`,
                                                                 }}
                                                             >
                                                                 <Checkbox.HiddenInput />
                                                                 <Checkbox.Control
-                                                                    transition={appTransitions.smooth}
+                                                                    transition={transitions.smooth}
                                                                     _checked={{
-                                                                        bg: appColors.primary,
-                                                                        borderColor: appColors.primary,
-                                                                        color: '#120f1e',
+                                                                        bg: colorPalette.primary,
+                                                                        borderColor: colorPalette.primary,
+                                                                        color: colorPalette.primaryText,
                                                                     }}
                                                                 >
                                                                     <Checkbox.Indicator />
                                                                 </Checkbox.Control>
                                                                 <Checkbox.Label
-                                                                    color={appColors.text}
+                                                                    color={colorPalette.text}
                                                                     fontSize={{ base: 'sm', md: 'sm' }}
                                                                     fontWeight="medium"
                                                                     textTransform="capitalize"
@@ -574,14 +609,14 @@ export const EventFormDialog = ({ categories, initialEvent, isSubmitting, mode, 
                             </Dialog.Body>
                             <Dialog.Footer
                                 borderTopWidth="1px"
-                                borderColor={appColors.border}
+                                borderColor={colorPalette.border}
                                 pb={{ base: '4', md: '6' }}
                                 pt={{ base: '3', md: '4' }}
                                 px={{ base: '3', md: '6' }}
                             >
                                 <SimpleGrid columns={2} gap={{ base: '2', md: '3' }} w="full">
                                     <Button
-                                        {...appNeutralButtonStyles}
+                                        {...secondaryButton}
                                         disabled={isSubmitting}
                                         onClick={handleCancel}
                                         size="sm"
@@ -590,7 +625,7 @@ export const EventFormDialog = ({ categories, initialEvent, isSubmitting, mode, 
                                         Cancel
                                     </Button>
                                     <Button
-                                        {...appPrimaryButtonStyles}
+                                        {...primaryButton}
                                         disabled={isSubmitting}
                                         size="sm"
                                         type="submit"
@@ -685,147 +720,36 @@ const DateTimePickerField = ({ errorMessage, fieldName, label, mode, onChange, r
     };
 
     const pickerContent = (
-        <DatePicker.Content
-            {...appDialogSurfaceStyles}
-            boxSizing="border-box"
-            fontSize={{ base: 'xs', sm: 'sm', md: 'md' }}
-            maxH={{ base: 'calc(100vh - 10rem)', sm: 'none' }}
-            maxW={{ base: '19rem', sm: '22rem', md: 'sm' }}
-            minW="0"
-            mx="0"
-            overflowX="hidden"
-            overflowY={{ base: 'auto', sm: 'visible' }}
-            overscrollBehavior="contain"
-            borderRadius={appRadii.inner}
-            w={{ base: '19rem', sm: '22rem', md: 'auto' }}
-            css={{
-                '& [data-scope="date-picker"][data-part="content"]': {
-                    boxSizing: 'border-box',
-                    maxWidth: '100%',
-                    minWidth: 0,
-                },
-                '& [data-scope="date-picker"][data-part="view"]': {
-                    boxSizing: 'border-box',
-                    width: '100%',
-                    maxWidth: '100%',
-                    minWidth: 0,
-                },
-                '& [data-scope="date-picker"][data-part="view-control"]': {
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '0.25rem',
-                    width: '100%',
-                    maxWidth: '100%',
-                    minWidth: 0,
-                },
-                '& [data-scope="date-picker"][data-part="view-trigger"]': {
-                    flex: '1 1 auto',
-                    minWidth: 0,
-                    paddingInline: '0.25rem',
-                    fontSize: '0.8125rem',
-                    overflow: 'hidden',
-                    textOverflow: 'ellipsis',
-                    whiteSpace: 'nowrap',
-                },
-                '& [data-scope="date-picker"][data-part="prev-trigger"], & [data-scope="date-picker"][data-part="next-trigger"]':
-                    {
-                        flex: '0 0 auto',
-                        width: '1.75rem',
-                        minWidth: 0,
-                        height: '1.75rem',
-                        paddingInline: 0,
-                    },
-                '& [data-scope="date-picker"][data-part="table"]': {
-                    width: '100%',
-                    maxWidth: '100%',
-                    minWidth: 0,
-                    tableLayout: 'fixed',
-                    borderCollapse: 'collapse',
-                },
-                '& [data-scope="date-picker"][data-part="table-row"]': {
-                    width: '100%',
-                },
-                '& [data-scope="date-picker"][data-part="table-header"]': {
-                    width: '14.285%',
-                    minWidth: 0,
-                    padding: 0,
-                    fontSize: '0.6875rem',
-                    lineHeight: 1.6,
-                    textAlign: 'center',
-                },
-                '& [data-scope="date-picker"][data-part="table-cell"]': {
-                    width: '14.285%',
-                    minWidth: 0,
-                    padding: 0,
-                    textAlign: 'center',
-                },
-                '& [data-scope="date-picker"][data-part="table-cell-trigger"]': {
-                    display: 'inline-flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    width: '100%',
-                    minWidth: 0,
-                    height: '2rem',
-                    paddingInline: 0,
-                    fontSize: '0.8125rem',
-                },
-                '& [role="grid"]': {
-                    width: '100%',
-                    maxWidth: '100%',
-                    minWidth: 0,
-                    tableLayout: 'fixed',
-                },
-                '& [role="grid"] th, & [role="grid"] td': {
-                    width: '14.285%',
-                    minWidth: 0,
-                    padding: 0,
-                    textAlign: 'center',
-                },
-                '& [role="grid"] button': {
-                    minWidth: 0,
-                    paddingInline: 0,
-                },
-                '@media (max-width: 360px)': {
-                    '& [data-scope="date-picker"][data-part="view-trigger"]': {
-                        fontSize: '0.75rem',
-                    },
-                    '& [data-scope="date-picker"][data-part="prev-trigger"], & [data-scope="date-picker"][data-part="next-trigger"]':
-                        {
-                            width: '1.625rem',
-                            height: '1.625rem',
-                        },
-                    '& [data-scope="date-picker"][data-part="table-cell-trigger"]': {
-                        height: '1.75rem',
-                        fontSize: '0.75rem',
-                    },
-                    '& [role="grid"] button': {
-                        minWidth: 0,
-                        height: '1.75rem',
-                        fontSize: '0.75rem',
-                        paddingInline: 0,
-                    },
-                },
-            }}
-        >
-            <Stack gap={{ base: '1', sm: '4' }} p={{ base: '1', sm: '4' }}>
-                <Box {...appSectionSurfaceStyles} borderRadius={appRadii.inner} p={{ base: '1', sm: '3' }}>
+        <DatePicker.Content {...datePickerPanel} css={datePickerCss}>
+            <Stack gap={{ base: '1', sm: '4' }} p={{ base: '0.25', sm: '4' }}>
+                <Box {...sectionPanel} borderRadius={radius.inner} p={{ base: '0.25', sm: '3' }}>
                     <DatePicker.View view="day">
                         <DatePicker.Header />
                         <DatePicker.DayTable />
                     </DatePicker.View>
+
+                    <DatePicker.View view="month">
+                        <DatePicker.Header />
+                        <DatePicker.MonthTable />
+                    </DatePicker.View>
+
+                    <DatePicker.View view="year">
+                        <DatePicker.Header />
+                        <DatePicker.YearTable />
+                    </DatePicker.View>
                 </Box>
 
                 <Stack
-                    {...appSectionSurfaceStyles}
-                    borderRadius={appRadii.inner}
-                    gap={{ base: '1.5', md: '2' }}
-                    p={{ base: '2.5', sm: '3' }}
+                    {...sectionPanel}
+                    borderRadius={radius.inner}
+                    gap={{ base: '1.25', md: '2' }}
+                    p={{ base: '2', sm: '3' }}
                 >
-                    <Text color={appColors.text} fontSize={{ base: 'xs', sm: 'sm' }} fontWeight="medium">
+                    <Text color={colorPalette.text} fontSize={{ base: 'xs', sm: 'sm' }} fontWeight="medium">
                         Time
                     </Text>
                     <Input
-                        {...appInputStyles}
+                        {...inputStyles}
                         disabled={!hasSelectedDate}
                         fontSize={{ base: 'xs', sm: 'sm' }}
                         height={{ base: '8', sm: '9' }}
@@ -840,7 +764,7 @@ const DateTimePickerField = ({ errorMessage, fieldName, label, mode, onChange, r
                 </Stack>
 
                 <Button
-                    {...appPrimaryButtonStyles}
+                    {...primaryButton}
                     disabled={!nextStoredValue}
                     fontSize={{ base: 'xs', sm: 'sm' }}
                     height={{ base: '8', sm: '9' }}
@@ -850,12 +774,12 @@ const DateTimePickerField = ({ errorMessage, fieldName, label, mode, onChange, r
                     transition="background-color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease, color 0.2s ease"
                     width="full"
                     _hover={{
-                        bg: appColors.primaryHover,
-                        boxShadow: '0 16px 30px rgba(203, 184, 255, 0.28)',
+                        bg: colorPalette.primaryHover,
+                        boxShadow: colorPalette.primaryShadowHover,
                         transform: 'none',
                     }}
                     _active={{
-                        bg: '#bea8ff',
+                        bg: colorPalette.primaryActive,
                         transform: 'none',
                     }}
                 >
@@ -877,6 +801,7 @@ const DateTimePickerField = ({ errorMessage, fieldName, label, mode, onChange, r
             positioning={{
                 hideWhenDetached: true,
                 placement: pickerPlacement,
+                sameWidth: true,
                 strategy: 'fixed',
             }}
             required
@@ -884,7 +809,7 @@ const DateTimePickerField = ({ errorMessage, fieldName, label, mode, onChange, r
             width="full"
         >
             <Stack gap={{ base: '1.5', md: '2' }} width="full">
-                <Text color={appColors.text} fontSize="sm" fontWeight="medium" id={labelId}>
+                <Text color={colorPalette.text} fontSize="sm" fontWeight="medium" id={labelId}>
                     {label}
                 </Text>
                 <DatePicker.Control width="full">
@@ -894,11 +819,11 @@ const DateTimePickerField = ({ errorMessage, fieldName, label, mode, onChange, r
                             aria-invalid={Boolean(errorMessage)}
                             aria-labelledby={labelId}
                             aria-required="true"
-                            bg={appColors.surfaceInset}
-                            borderColor={appColors.border}
+                            bg={colorPalette.surfaceInset}
+                            borderColor={colorPalette.border}
                             borderWidth="1px"
-                            boxShadow="inset 0 1px 0 rgba(255, 255, 255, 0.02)"
-                            color={isStoredDateTimeValid(value) ? appColors.text : appColors.textMuted}
+                            boxShadow={colorPalette.shadowInset}
+                            color={isStoredDateTimeValid(value) ? colorPalette.text : colorPalette.textMuted}
                             fontSize="sm"
                             fontWeight="normal"
                             height={{ base: '9', md: '10' }}
@@ -907,10 +832,10 @@ const DateTimePickerField = ({ errorMessage, fieldName, label, mode, onChange, r
                             type="button"
                             transition="background-color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease, color 0.2s ease"
                             width="full"
-                            _hover={{ borderColor: 'rgba(180, 255, 245, 0.28)' }}
+                            _hover={{ borderColor: colorPalette.primaryBorder }}
                             _focusVisible={{
-                                borderColor: appColors.primary,
-                                boxShadow: `0 0 0 3px ${appColors.focusRing}`,
+                                borderColor: colorPalette.primary,
+                                boxShadow: `0 0 0 3px ${colorPalette.focusRing}`,
                             }}
                         >
                             {formatStoredDateTimeForDisplay(value)}

@@ -16,19 +16,21 @@ import { Link, useNavigate, useParams } from 'react-router-dom';
 import { DeleteEventDialog } from '../components/DeleteEventDialog';
 import { EventFormDialog } from '../components/EventFormDialog';
 import { CategoryTags } from '../components/CategoryTags';
+import { Tooltip } from '../components/ui/tooltip';
 import { toaster } from '../components/ui/toaster';
 import { useEvents } from '../context/EventsContext';
 import { formatEventDateTime } from '../utils/event-utils';
 import {
-    appColors,
-    appCardImageOverlay,
-    appDangerButtonStyles,
-    appHeroStyles,
-    appPrimaryButtonStyles,
-    appRaisedSurfaceStyles,
-    appRadii,
-    appTransitions,
-} from '../theme/appTheme';
+    colorPalette,
+    cardImageOverlay,
+    dangerButton,
+    eventMetaPanel,
+    heroPanel,
+    primaryButton,
+    raisedSurface,
+    radius,
+    transitions,
+} from '../theme/theme';
 
 export const EventPage = () => {
     const navigate = useNavigate();
@@ -59,7 +61,8 @@ export const EventPage = () => {
         } catch {
             toaster.create({
                 title: 'Update failed',
-                description: 'We could not save the event changes. Please make sure the server is running and try again.',
+                description:
+                    'We could not save the event changes. Please make sure the server is running and try again.',
                 type: 'error',
             });
         } finally {
@@ -98,20 +101,20 @@ export const EventPage = () => {
         <Container maxW="6xl" py={{ base: '8', md: '12' }}>
             {isLoading ? (
                 <Stack gap="6">
-                    <Box {...appHeroStyles} borderRadius={appRadii.panel} overflow="hidden" p={{ base: '5', md: '8' }}>
+                    <Box {...heroPanel} borderRadius={radius.panel} overflow="hidden" p={{ base: '5', md: '8' }}>
                         <Stack gap="6">
-                            <Skeleton height={{ base: '240px', md: '360px' }} borderRadius={appRadii.inner} />
+                            <Skeleton height={{ base: '240px', md: '360px' }} borderRadius={radius.inner} />
                             <Stack gap="3">
                                 <Skeleton height="12px" width="20%" />
                                 <Skeleton height="36px" width={{ base: '70%', md: '44%' }} />
                                 <Skeleton height="22px" width={{ base: '48%', md: '24%' }} />
                             </Stack>
                             <SimpleGrid columns={{ base: 1, md: 3 }} gap="4">
-                                <Skeleton height="92px" borderRadius={appRadii.inner} />
-                                <Skeleton height="92px" borderRadius={appRadii.inner} />
-                                <Skeleton height="92px" borderRadius={appRadii.inner} />
+                                <Skeleton height="92px" borderRadius={radius.inner} />
+                                <Skeleton height="92px" borderRadius={radius.inner} />
+                                <Skeleton height="92px" borderRadius={radius.inner} />
                             </SimpleGrid>
-                            <Box {...appRaisedSurfaceStyles} borderRadius={appRadii.inner} p="5">
+                            <Box {...raisedSurface} borderRadius={radius.inner} p="5">
                                 <Skeleton height="14px" mb="4" width="16%" />
                                 <SkeletonText noOfLines={4} />
                             </Box>
@@ -121,25 +124,28 @@ export const EventPage = () => {
             ) : null}
 
             {!isLoading && hasLoadError ? (
-                <Box {...appHeroStyles} borderRadius={appRadii.panel} p={{ base: '6', md: '8' }}>
+                <Box {...heroPanel} borderRadius={radius.panel} p={{ base: '6', md: '8' }}>
                     <Stack gap="4" maxW="lg">
                         <Badge
                             alignSelf="start"
-                            bg="rgba(248, 113, 113, 0.14)"
-                            borderColor="rgba(248, 113, 113, 0.28)"
-                            borderRadius={appRadii.pill}
+                            bg={colorPalette.dangerSoft}
+                            borderColor={colorPalette.dangerBorder}
+                            borderRadius={radius.pill}
                             borderWidth="1px"
-                            color={appColors.text}
+                            color={colorPalette.text}
                             px="3"
                             py="1"
                         >
                             Data unavailable
                         </Badge>
-                        <Heading color={appColors.text} size="lg">Unable to load event</Heading>
-                        <Text color={appColors.textMuted}>
-                            We can&apos;t load this event right now. Please check whether the server is running and try again.
+                        <Heading color={colorPalette.text} size="lg">
+                            Unable to load event
+                        </Heading>
+                        <Text color={colorPalette.textMuted}>
+                            We can&apos;t load this event right now. Please check whether the server is running and try
+                            again.
                         </Text>
-                        <Button {...appPrimaryButtonStyles} alignSelf="start" asChild mt="2">
+                        <Button {...primaryButton} alignSelf="start" asChild mt="2">
                             <Link to="/">Back to events</Link>
                         </Button>
                     </Stack>
@@ -147,25 +153,25 @@ export const EventPage = () => {
             ) : null}
 
             {!isLoading && !hasLoadError && !event ? (
-                <Box {...appHeroStyles} borderRadius={appRadii.panel} p={{ base: '6', md: '8' }}>
+                <Box {...heroPanel} borderRadius={radius.panel} p={{ base: '6', md: '8' }}>
                     <Stack gap="4" maxW="lg">
                         <Badge
                             alignSelf="start"
-                            bg="rgba(203, 184, 255, 0.14)"
-                            borderColor={appColors.borderStrong}
-                            borderRadius={appRadii.pill}
+                            bg={colorPalette.primarySoft}
+                            borderColor={colorPalette.borderStrong}
+                            borderRadius={radius.pill}
                             borderWidth="1px"
-                            color={appColors.text}
+                            color={colorPalette.text}
                             px="3"
                             py="1"
                         >
                             Event details
                         </Badge>
-                        <Heading color={appColors.text} size="lg">Event not found</Heading>
-                        <Text color={appColors.textMuted}>
-                            The requested event could not be found.
-                        </Text>
-                        <Button {...appPrimaryButtonStyles} alignSelf="start" asChild mt="2">
+                        <Heading color={colorPalette.text} size="lg">
+                            Event not found
+                        </Heading>
+                        <Text color={colorPalette.textMuted}>The requested event could not be found.</Text>
+                        <Button {...primaryButton} alignSelf="start" asChild mt="2">
                             <Link to="/">Back to events</Link>
                         </Button>
                     </Stack>
@@ -175,45 +181,17 @@ export const EventPage = () => {
             {!isLoading && event ? (
                 <>
                     <Stack gap={{ base: '6', md: '8' }}>
-                        <Box {...appHeroStyles} borderRadius={appRadii.panel} overflow="hidden" p={{ base: '5', md: '8' }}>
-                            <Stack gap={{ base: '6', lg: '8' }}>
-                                <SimpleGrid columns={{ base: 1, xl: 2 }} gap={{ base: '6', lg: '8' }} alignItems="start">
-                                    <Box
-                                        {...appRaisedSurfaceStyles}
-                                        borderRadius={appRadii.panel}
-                                        overflow="hidden"
-                                        position="relative"
-                                        transition={appTransitions.smooth}
-                                        _hover={{
-                                            borderColor: appColors.borderStrong,
-                                            boxShadow: '0 18px 36px rgba(0, 0, 0, 0.24), 0 0 26px rgba(24, 214, 199, 0.08)',
-                                        }}
-                                    >
-                                        <Image
-                                            alt={event.title}
-                                            aspectRatio={16 / 10}
-                                            decoding="async"
-                                            fetchPriority="high"
-                                            fit="cover"
-                                            loading="eager"
-                                            referrerPolicy="no-referrer"
-                                            sizes="(min-width: 1280px) 50vw, 100vw"
-                                            src={event.image}
-                                            transition={appTransitions.smooth}
-                                            width="100%"
-                                        />
-                                        <Box
-                                            {...appCardImageOverlay}
-                                            inset="0"
-                                            pointerEvents="none"
-                                            position="absolute"
-                                        />
-                                    </Box>
-
-                                    <Stack gap="5">
-                                        <Stack gap="3">
+                        <Box {...heroPanel} borderRadius={radius.panel} overflow="hidden" p="20px" w="full" mx="auto">
+                            <Stack gap={{ base: '6', md: '8' }}>
+                                <SimpleGrid
+                                    columns={{ base: 1, md: 2 }}
+                                    gap={{ base: '6', md: '8' }}
+                                    alignItems="start"
+                                >
+                                    <Stack gap={{ base: '6', md: '5' }}>
+                                        <Stack display={{ base: 'flex', md: 'none' }} gap="3">
                                             <Text
-                                                color={appColors.textMuted}
+                                                color={colorPalette.textMuted}
                                                 fontSize="xs"
                                                 fontWeight="semibold"
                                                 letterSpacing="0.08em"
@@ -221,78 +199,145 @@ export const EventPage = () => {
                                             >
                                                 Event details
                                             </Text>
-                                            <Heading color={appColors.text} fontSize={{ base: '2xl', md: '4xl' }} lineHeight="shorter">
+                                            <Heading
+                                                color={colorPalette.text}
+                                                fontSize={{ base: '2xl', md: '4xl' }}
+                                                lineHeight="shorter"
+                                            >
                                                 {event.title}
                                             </Heading>
                                             <CategoryTags categories={categories} categoryIds={event.categoryIds} />
                                         </Stack>
 
-                                        <SimpleGrid columns={{ base: 1, sm: 2 }} gap="3" w={{ base: 'full', sm: 'auto' }}>
-                                            <Button
-                                                {...appPrimaryButtonStyles}
-                                                onClick={() => setIsEditDialogOpen(true)}
-                                                size="sm"
-                                                width="full"
-                                            >
-                                                Edit Event
-                                            </Button>
-                                            <Button
-                                                {...appDangerButtonStyles}
-                                                onClick={() => setIsDeleteDialogOpen(true)}
-                                                size="sm"
-                                                variant="outline"
-                                                width="full"
-                                            >
-                                                Delete Event
-                                            </Button>
-                                        </SimpleGrid>
-
-                                        <SimpleGrid columns={{ base: 1, sm: 3, xl: 1 }} gap="3">
+                                        <Box
+                                            {...raisedSurface}
+                                            borderRadius={radius.panel}
+                                            justifySelf={{ base: 'stretch', md: 'start' }}
+                                            maxW={{ base: 'full', md: '42rem' }}
+                                            overflow="hidden"
+                                            position="relative"
+                                            transition={transitions.smooth}
+                                            w="full"
+                                            _hover={{
+                                                borderColor: colorPalette.borderStrong,
+                                                boxShadow: colorPalette.shadowCardHover,
+                                            }}
+                                        >
+                                            <Image
+                                                alt={event.title}
+                                                aspectRatio={16 / 10}
+                                                decoding="async"
+                                                fetchPriority="high"
+                                                fit="cover"
+                                                loading="eager"
+                                                referrerPolicy="no-referrer"
+                                                sizes="(min-width: 1280px) 50vw, 100vw"
+                                                src={event.image}
+                                                transition={transitions.smooth}
+                                                width="100%"
+                                            />
                                             <Box
-                                                {...appRaisedSurfaceStyles}
-                                                bg="linear-gradient(180deg, rgba(11, 31, 31, 0.96) 0%, rgba(7, 23, 23, 0.96) 100%)"
-                                                borderRadius={appRadii.inner}
-                                                p="4"
-                                                transition={appTransitions.smooth}
-                                                _hover={{ borderColor: appColors.borderStrong }}
+                                                {...cardImageOverlay}
+                                                inset="0"
+                                                pointerEvents="none"
+                                                position="absolute"
+                                            />
+                                        </Box>
+
+                                        <Box
+                                            {...raisedSurface}
+                                            bg={colorPalette.eventMetaGradient}
+                                            borderRadius={radius.inner}
+                                            p={{ base: '5', md: '6' }}
+                                            transition={transitions.smooth}
+                                            _hover={{ borderColor: colorPalette.borderStrong }}
+                                        >
+                                            <Stack gap="3">
+                                                <Text
+                                                    color={colorPalette.textMuted}
+                                                    fontSize="xs"
+                                                    fontWeight="semibold"
+                                                    letterSpacing="0.08em"
+                                                    textTransform="uppercase"
+                                                >
+                                                    Description
+                                                </Text>
+                                                <Text
+                                                    color={colorPalette.text}
+                                                    fontSize={{ base: 'md', md: 'lg' }}
+                                                    lineHeight="tall"
+                                                >
+                                                    {event.description}
+                                                </Text>
+                                            </Stack>
+                                        </Box>
+                                    </Stack>
+
+                                    <Stack gap="5">
+                                        <Stack display={{ base: 'none', md: 'flex' }} gap="3">
+                                            <Text
+                                                color={colorPalette.textMuted}
+                                                fontSize="xs"
+                                                fontWeight="semibold"
+                                                letterSpacing="0.08em"
+                                                textTransform="uppercase"
                                             >
+                                                Event details
+                                            </Text>
+                                            <Heading
+                                                color={colorPalette.text}
+                                                fontSize={{ base: '2xl', md: '4xl' }}
+                                                lineHeight="shorter"
+                                            >
+                                                {event.title}
+                                            </Heading>
+                                            <CategoryTags categories={categories} categoryIds={event.categoryIds} />
+                                        </Stack>
+
+                                        <SimpleGrid columns={{ base: 1, md: 1 }} gap="3">
+                                            <Box {...eventMetaPanel} p="4">
                                                 <Stack gap="1">
-                                                    <Text color={appColors.textMuted} fontSize="sm" fontWeight="medium">
+                                                    <Text
+                                                        color={colorPalette.textMuted}
+                                                        fontSize="sm"
+                                                        fontWeight="medium"
+                                                    >
                                                         Starts
                                                     </Text>
-                                                    <Text color={appColors.text} lineHeight="tall">{formatEventDateTime(event.startTime)}</Text>
+                                                    <Text color={colorPalette.text} lineHeight="tall">
+                                                        {formatEventDateTime(event.startTime)}
+                                                    </Text>
                                                 </Stack>
                                             </Box>
 
-                                            <Box
-                                                {...appRaisedSurfaceStyles}
-                                                bg="linear-gradient(180deg, rgba(11, 31, 31, 0.96) 0%, rgba(7, 23, 23, 0.96) 100%)"
-                                                borderRadius={appRadii.inner}
-                                                p="4"
-                                                transition={appTransitions.smooth}
-                                                _hover={{ borderColor: appColors.borderStrong }}
-                                            >
+                                            <Box {...eventMetaPanel} p="4">
                                                 <Stack gap="1">
-                                                    <Text color={appColors.textMuted} fontSize="sm" fontWeight="medium">
+                                                    <Text
+                                                        color={colorPalette.textMuted}
+                                                        fontSize="sm"
+                                                        fontWeight="medium"
+                                                    >
                                                         Ends
                                                     </Text>
-                                                    <Text color={appColors.text} lineHeight="tall">{formatEventDateTime(event.endTime)}</Text>
+                                                    <Text color={colorPalette.text} lineHeight="tall">
+                                                        {formatEventDateTime(event.endTime)}
+                                                    </Text>
                                                 </Stack>
                                             </Box>
 
-                                            <Box
-                                                {...appRaisedSurfaceStyles}
-                                                bg="linear-gradient(180deg, rgba(11, 31, 31, 0.96) 0%, rgba(7, 23, 23, 0.96) 100%)"
-                                                borderRadius={appRadii.inner}
-                                                p="4"
-                                                transition={appTransitions.smooth}
-                                                _hover={{ borderColor: appColors.borderStrong }}
-                                            >
+                                            <Box {...eventMetaPanel} p="4">
                                                 <Stack gap="1">
-                                                    <Text color={appColors.textMuted} fontSize="sm" fontWeight="medium">
+                                                    <Text
+                                                        color={colorPalette.textMuted}
+                                                        fontSize="sm"
+                                                        fontWeight="medium"
+                                                    >
                                                         Location
                                                     </Text>
-                                                    <Text color={location ? appColors.text : appColors.textMuted} lineHeight="tall">
+                                                    <Text
+                                                        color={location ? colorPalette.text : colorPalette.textMuted}
+                                                        lineHeight="tall"
+                                                    >
                                                         {location || 'Not specified'}
                                                     </Text>
                                                 </Stack>
@@ -301,29 +346,28 @@ export const EventPage = () => {
                                     </Stack>
                                 </SimpleGrid>
 
-                                <Box
-                                    {...appRaisedSurfaceStyles}
-                                    bg="linear-gradient(180deg, rgba(11, 31, 31, 0.96) 0%, rgba(7, 23, 23, 0.96) 100%)"
-                                    borderRadius={appRadii.inner}
-                                    p={{ base: '5', md: '6' }}
-                                    transition={appTransitions.smooth}
-                                    _hover={{ borderColor: appColors.borderStrong }}
-                                >
-                                    <Stack gap="3" maxW="4xl">
-                                        <Text
-                                            color={appColors.textMuted}
-                                            fontSize="xs"
-                                            fontWeight="semibold"
-                                            letterSpacing="0.08em"
-                                            textTransform="uppercase"
+                                <SimpleGrid columns={{ base: 1, sm: 2 }} gap="3" w={{ base: 'full', md: 'sm' }}>
+                                    <Tooltip content="Edit this event">
+                                        <Button
+                                            {...primaryButton}
+                                            onClick={() => setIsEditDialogOpen(true)}
+                                            size="sm"
+                                            width="full"
                                         >
-                                            Description
-                                        </Text>
-                                        <Text color={appColors.text} fontSize={{ base: 'md', md: 'lg' }} lineHeight="tall">
-                                            {event.description}
-                                        </Text>
-                                    </Stack>
-                                </Box>
+                                            Edit Event
+                                        </Button>
+                                    </Tooltip>
+                                    <Tooltip content="Delete this event">
+                                        <Button
+                                            {...dangerButton}
+                                            onClick={() => setIsDeleteDialogOpen(true)}
+                                            size="sm"
+                                            width="full"
+                                        >
+                                            Delete Event
+                                        </Button>
+                                    </Tooltip>
+                                </SimpleGrid>
                             </Stack>
                         </Box>
                     </Stack>

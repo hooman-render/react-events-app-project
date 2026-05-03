@@ -1,20 +1,21 @@
 import { useState } from 'react';
-import { Box, Button, Drawer, Flex, Link, Portal, Stack, Text } from '@chakra-ui/react';
+import { Box, Button, CloseButton, Drawer, Flex, Link, Portal, Stack, Text } from '@chakra-ui/react';
 import { NavLink, Outlet } from 'react-router-dom';
 import { Navigation } from './Navigation';
 import { EventFormDialog } from './EventFormDialog';
 import { Toaster, toaster } from './ui/toaster';
+import { Tooltip } from './ui/tooltip';
 import { useEvents } from '../context/EventsContext';
 import {
-    appColors,
-    appDrawerSurfaceStyles,
-    appLayout,
-    appNeutralButtonStyles,
-    appPlaceholderBadgeStyles,
-    appPrimaryButtonStyles,
-    appRadii,
-    appTransitions,
-} from '../theme/appTheme';
+    colorPalette,
+    drawerCloseButton,
+    drawerSurface,
+    layout,
+    placeholderBadge,
+    primaryButton,
+    radius,
+    transitions,
+} from '../theme/theme';
 
 const dashboardItems = [
     { label: 'Overview', soon: true },
@@ -36,21 +37,21 @@ const drawerLinkStyles = ({ isActive }) => ({
     gap: '0.75rem',
     padding: '0.875rem 1rem',
     borderRadius: '1rem',
-    border: `1px solid ${isActive ? appColors.borderStrong : appColors.border}`,
-    background: isActive ? 'rgba(203, 184, 255, 0.12)' : 'rgba(3, 16, 16, 0.76)',
-    color: appColors.text,
+    border: `1px solid ${isActive ? colorPalette.borderStrong : colorPalette.border}`,
+    background: isActive ? colorPalette.primarySoft : colorPalette.surfaceInset,
+    color: colorPalette.text,
     fontWeight: isActive ? '600' : '500',
     textDecoration: 'none',
-    transition: appTransitions.smooth,
-    boxShadow: isActive ? '0 12px 24px rgba(203, 184, 255, 0.14)' : 'none',
+    transition: transitions.smooth,
+    boxShadow: isActive ? colorPalette.shadowPrimary : 'none',
 });
 
 const placeholderItemStyles = {
     align: 'center',
-    bg: 'rgba(3, 16, 16, 0.76)',
+    bg: colorPalette.surfaceInset,
     borderRadius: '1rem',
     borderWidth: '1px',
-    borderColor: appColors.border,
+    borderColor: colorPalette.border,
     justify: 'space-between',
     px: '4',
     py: '3.5',
@@ -65,7 +66,8 @@ export const Root = () => {
         if (!isServerAvailable) {
             toaster.create({
                 title: 'Server unavailable',
-                description: 'Event data is unavailable right now. Please check whether the server is running and try again.',
+                description:
+                    'Event data is unavailable right now. Please check whether the server is running and try again.',
                 type: 'error',
             });
             return;
@@ -110,73 +112,70 @@ export const Root = () => {
     };
 
     return (
-        <Box
-            minH="100vh"
-            bg={`radial-gradient(circle at top, ${appColors.appBgAccent} 0%, ${appColors.appBg} 48%, #010909 100%)`}
-            color={appColors.text}
-        >
-            <Navigation addEventDisabled={!isServerAvailable} onAddEventOpen={openCreateDialog} onMenuOpen={openDrawer} />
+        <Box minH="100vh" bg={colorPalette.appBackground} color={colorPalette.text}>
+            <Navigation
+                addEventDisabled={!isServerAvailable}
+                onAddEventOpen={openCreateDialog}
+                onMenuOpen={openDrawer}
+            />
             <Drawer.Root open={isDrawerOpen} onOpenChange={handleDrawerOpenChange} placement="start">
                 <Portal>
-                    <Drawer.Backdrop bg="rgba(1, 8, 8, 0.82)" />
+                    <Drawer.Backdrop bg={colorPalette.overlayDark} />
                     <Drawer.Positioner>
                         <Drawer.Content
-                            {...appDrawerSurfaceStyles}
+                            {...drawerSurface}
                             display="flex"
                             flexDirection="column"
                             h="100dvh"
                             overflow="hidden"
-                            w={appLayout.drawerWidth}
+                            w={layout.drawerWidth}
                         >
-                            <Drawer.Header borderBottomWidth="1px" borderColor={appColors.border} px="5" py="4">
+                            <Drawer.Header borderBottomWidth="1px" borderColor={colorPalette.border} px="5" py="4">
                                 <Flex align="center" justify="space-between" gap="4">
                                     <Stack gap="1">
-                                        <Drawer.Title color={appColors.text} fontSize="lg" fontWeight="bold">
+                                        <Drawer.Title color={colorPalette.text} fontSize="lg" fontWeight="bold">
                                             Navigation
                                         </Drawer.Title>
-                                        <Drawer.Description color={appColors.textMuted} fontSize="sm">
-                                            Dashboard shortcuts and app sections.
+                                        <Drawer.Description color={colorPalette.textMuted} fontSize="sm">
+                                            Dashboard.
                                         </Drawer.Description>
                                     </Stack>
-                                    <Drawer.CloseTrigger
-                                        {...appNeutralButtonStyles}
-                                        aria-label="Close navigation menu"
-                                        px="3"
-                                        size="sm"
-                                    >
-                                        Close
-                                    </Drawer.CloseTrigger>
+                                    <Tooltip content="Close navigation">
+                                        <Drawer.CloseTrigger asChild>
+                                            <CloseButton {...drawerCloseButton} aria-label="Close navigation" />
+                                        </Drawer.CloseTrigger>
+                                    </Tooltip>
                                 </Flex>
                             </Drawer.Header>
                             <Drawer.Body minH="0" overflowY="auto" px="5" py="5">
                                 <Stack gap="5">
                                     <Box
-                                        bg="rgba(203, 184, 255, 0.10)"
-                                        borderRadius={appRadii.inner}
+                                        bg={colorPalette.primarySoft}
+                                        borderRadius={radius.inner}
                                         borderWidth="1px"
-                                        borderColor={appColors.borderStrong}
+                                        borderColor={colorPalette.borderStrong}
                                         px="4"
                                         py="4"
                                     >
                                         <Text
-                                            color={appColors.textMuted}
+                                            color={colorPalette.textMuted}
                                             fontSize="xs"
                                             letterSpacing="0.08em"
                                             textTransform="uppercase"
                                         >
                                             Workspace
                                         </Text>
-                                        <Text color={appColors.text} fontSize="lg" fontWeight="semibold" mt="1">
+                                        <Text color={colorPalette.text} fontSize="lg" fontWeight="semibold" mt="1">
                                             Welcome user
                                         </Text>
-                                        <Text color={appColors.textMuted} fontSize="sm" mt="1">
+                                        <Text color={colorPalette.textMuted} fontSize="sm" mt="1">
                                             Navigate the app or preview upcoming dashboard sections.
                                         </Text>
                                     </Box>
 
                                     <Stack gap="3">
                                         <Text
-                                            color={appColors.textMuted}
+                                            color={colorPalette.textMuted}
                                             fontSize="xs"
                                             letterSpacing="0.08em"
                                             textTransform="uppercase"
@@ -194,22 +193,22 @@ export const Root = () => {
                                                         style={drawerLinkStyles}
                                                         to={item.to}
                                                         _hover={{
-                                                            borderColor: appColors.borderStrong,
-                                                            bg: 'rgba(203, 184, 255, 0.08)',
+                                                            borderColor: colorPalette.borderStrong,
+                                                            bg: colorPalette.primarySoft,
                                                             transform: 'translateY(-1px)',
                                                         }}
                                                         _focusVisible={{
-                                                            boxShadow: `0 0 0 3px ${appColors.focusRing}`,
+                                                            boxShadow: `0 0 0 3px ${colorPalette.focusRing}`,
                                                         }}
                                                     >
                                                         <span>{item.label}</span>
                                                     </Link>
                                                 ) : (
                                                     <Flex key={item.label} {...placeholderItemStyles}>
-                                                        <Text color={appColors.text} fontWeight="500">
+                                                        <Text color={colorPalette.text} fontWeight="500">
                                                             {item.label}
                                                         </Text>
-                                                        <Box {...appPlaceholderBadgeStyles}>Coming soon</Box>
+                                                        <Box {...placeholderBadge}>Coming soon</Box>
                                                     </Flex>
                                                 ),
                                             )}
@@ -218,7 +217,7 @@ export const Root = () => {
 
                                     <Stack gap="3">
                                         <Text
-                                            color={appColors.textMuted}
+                                            color={colorPalette.textMuted}
                                             fontSize="xs"
                                             letterSpacing="0.08em"
                                             textTransform="uppercase"
@@ -234,12 +233,12 @@ export const Root = () => {
                                                     style={drawerLinkStyles}
                                                     to={item.to}
                                                     _hover={{
-                                                        borderColor: appColors.borderStrong,
-                                                        bg: 'rgba(203, 184, 255, 0.08)',
+                                                        borderColor: colorPalette.borderStrong,
+                                                        bg: colorPalette.primarySoft,
                                                         transform: 'translateY(-1px)',
                                                     }}
                                                     _focusVisible={{
-                                                        boxShadow: `0 0 0 3px ${appColors.focusRing}`,
+                                                        boxShadow: `0 0 0 3px ${colorPalette.focusRing}`,
                                                     }}
                                                 >
                                                     <span>{item.label}</span>
@@ -249,18 +248,20 @@ export const Root = () => {
                                     </Stack>
                                 </Stack>
                             </Drawer.Body>
-                            <Drawer.Footer borderTopWidth="1px" borderColor={appColors.border} px="5" py="4">
+                            <Drawer.Footer borderTopWidth="1px" borderColor={colorPalette.border} px="5" py="4">
                                 <Stack gap="2" w="full">
-                                    <Button
-                                        {...appPrimaryButtonStyles}
-                                        disabled={!isServerAvailable}
-                                        onClick={handleOpenCreateFromDrawer}
-                                        size="sm"
-                                        width="full"
-                                    >
-                                        Add Event
-                                    </Button>
-                                    <Text color={appColors.textMuted} fontSize="xs" textAlign="center">
+                                    <Tooltip content="Create a new event">
+                                        <Button
+                                            {...primaryButton}
+                                            disabled={!isServerAvailable}
+                                            onClick={handleOpenCreateFromDrawer}
+                                            size="sm"
+                                            width="full"
+                                        >
+                                            Add Event
+                                        </Button>
+                                    </Tooltip>
+                                    <Text color={colorPalette.textMuted} fontSize="xs" textAlign="center">
                                         Real navigation stays in the header. Extra sections are visual placeholders.
                                     </Text>
                                 </Stack>
